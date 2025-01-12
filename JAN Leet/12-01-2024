@@ -1,0 +1,53 @@
+#2116. Check if a Parentheses String Can Be Valid
+class Solution {
+    public boolean canBeValid(String s, String locked) {
+        int n = s.length();
+        // If the length of the string is odd, it cannot be valid
+        if (n % 2 != 0) {
+            return false;
+        }
+
+        int open = 0; // Tracks balance of '('
+        int wildcards = 0; // Tracks the number of '0's (wildcards)
+
+        // Left-to-right pass
+        for (int i = 0; i < n; i++) {
+            if (locked.charAt(i) == '1') {
+                if (s.charAt(i) == '(') {
+                    open++;
+                } else {
+                    open--; // Closing bracket decreases balance
+                }
+            } else {
+                wildcards++; // We can use this as '(' or ')'
+            }
+
+            if (open + wildcards < 0) {
+                return false; // More ')' than available '(' and wildcards
+            }
+        }
+
+        // Right-to-left pass
+        int close = 0; // Tracks balance of ')'
+        wildcards = 0; // Reset wildcards count
+
+        for (int i = n - 1; i >= 0; i--) {
+            if (locked.charAt(i) == '1') {
+                if (s.charAt(i) == ')') {
+                    close++;
+                } else {
+                    close--; // Opening bracket decreases balance
+                }
+            } else {
+                wildcards++; // We can use this as '(' or ')'
+            }
+
+            if (close + wildcards < 0) {
+                return false; // More '(' than available ')' and wildcards
+            }
+        }
+
+        // If both passes succeeded, the string can be valid
+        return true;
+    }
+}
