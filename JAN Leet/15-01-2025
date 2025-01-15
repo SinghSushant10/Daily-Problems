@@ -1,0 +1,26 @@
+2429. Minimize XOR
+
+class Solution {
+    public int minimizeXor(int num1, int num2) {
+         int count2 = Integer.bitCount(num2); // Count set bits in num2
+        int x = 0;
+
+        // Step 1: Set bits in positions where num1 has 1s
+        for (int i = 31; i >= 0 && count2 > 0; i--) {
+            if ((num1 & (1 << i)) != 0) { // Check if bit `i` in num1 is set
+                x |= (1 << i); // Set the bit `i` in x
+                count2--; // Decrease the remaining count of set bits needed
+            }
+        }
+
+        // Step 2: Set remaining bits from least significant to most significant
+        for (int i = 0; i < 32 && count2 > 0; i++) {
+            if ((x & (1 << i)) == 0) { // If bit `i` in x is not set
+                x |= (1 << i); // Set the bit `i` in x
+                count2--; // Decrease the remaining count of set bits needed
+            }
+        }
+
+        return x;
+    }
+}
