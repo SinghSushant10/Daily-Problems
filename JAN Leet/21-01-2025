@@ -1,0 +1,27 @@
+#2017. Grid Game
+class Solution {
+    public long gridGame(int[][] grid) {
+        int n = grid[0].length;
+
+        // Calculate prefix sums for both rows
+        long[] prefixRow0 = new long[n + 1];
+        long[] prefixRow1 = new long[n + 1];
+        for (int i = 0; i < n; i++) {
+            prefixRow0[i + 1] = prefixRow0[i] + grid[0][i];
+            prefixRow1[i + 1] = prefixRow1[i] + grid[1][i];
+        }
+
+        // Calculate the minimum maximum points the second robot can collect
+        long minMaxPoints = Long.MAX_VALUE;
+        for (int i = 0; i < n; i++) {
+            // Points left for the second robot
+            long above = prefixRow0[n] - prefixRow0[i + 1]; // Row 0, after column i
+            long below = prefixRow1[i]; // Row 1, before column i
+            long secondRobotPoints = Math.max(above, below);
+            minMaxPoints = Math.min(minMaxPoints, secondRobotPoints);
+        }
+
+        return minMaxPoints;
+    }
+}
+
