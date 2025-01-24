@@ -1,0 +1,47 @@
+#802. Find Eventual Safe States
+
+import java.util.*;
+
+class Solution {
+    public List<Integer> eventualSafeNodes(int[][] graph) {
+        int n = graph.length;
+
+        // Step 1: Reverse the graph.
+        List<List<Integer>> reverseGraph = new ArrayList<>();
+        for (int i = 0; i < n; i++) {
+            reverseGraph.add(new ArrayList<>());
+        }
+        int[] inDegree = new int[n];
+        for (int i = 0; i < n; i++) {
+            for (int neighbor : graph[i]) {
+                reverseGraph.get(neighbor).add(i); // Reverse edge
+                inDegree[i]++;                    // Track in-degree
+            }
+        }
+
+        // Step 2: Initialize the queue with nodes having in-degree 0.
+        Queue<Integer> queue = new LinkedList<>();
+        for (int i = 0; i < n; i++) {
+            if (inDegree[i] == 0) {
+                queue.offer(i);
+            }
+        }
+
+        // Step 3: Perform topological sort.
+        List<Integer> safeNodes = new ArrayList<>();
+        while (!queue.isEmpty()) {
+            int node = queue.poll();
+            safeNodes.add(node);
+            for (int neighbor : reverseGraph.get(node)) {
+                inDegree[neighbor]--;
+                if (inDegree[neighbor] == 0) {
+                    queue.offer(neighbor);
+                }
+            }
+        }
+
+        // Step 4: Sort the result in ascending order.
+        Collections.sort(safeNodes);
+        return safeNodes;
+    }
+}
