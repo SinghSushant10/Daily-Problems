@@ -1,0 +1,35 @@
+#1462. Course Schedule IV
+
+class Solution {
+    public List<Boolean> checkIfPrerequisite(int numCourses, int[][] prerequisites, int[][] queries) {
+        // Create a boolean matrix to represent the transitive closure
+        boolean[][] isPrerequisite = new boolean[numCourses][numCourses];
+        
+        // Initialize the matrix based on the prerequisites
+        for (int[] prerequisite : prerequisites) {
+            int courseA = prerequisite[0];
+            int courseB = prerequisite[1];
+            isPrerequisite[courseA][courseB] = true;
+        }
+        
+        // Apply the Floyd-Warshall algorithm to compute the transitive closure
+        for (int k = 0; k < numCourses; k++) { // Intermediate node
+            for (int i = 0; i < numCourses; i++) { // Starting node
+                for (int j = 0; j < numCourses; j++) { // Ending node
+                    // If course k is a prerequisite for j and i is a prerequisite for k, then i is a prerequisite for j
+                    isPrerequisite[i][j] |= isPrerequisite[i][k] && isPrerequisite[k][j];
+                }
+            }
+        }
+        
+        // Answer the queries based on the transitive closure
+        List<Boolean> result = new ArrayList<>();
+        for (int[] query : queries) {
+            int courseU = query[0];
+            int courseV = query[1];
+            result.add(isPrerequisite[courseU][courseV]);
+        }
+        
+        return result;
+    }
+}
