@@ -1,0 +1,52 @@
+#684. Redundant Connection
+
+class Solution {
+    public int[] findRedundantConnection(int[][] edges) {
+        int n = edges.length;
+        int[] parent = new int[n + 1];
+        int[] rank = new int[n + 1];
+
+        // Initialize the parent array
+        for (int i = 1; i <= n; i++) {
+            parent[i] = i;  // Each node is its own parent initially
+            rank[i] = 1;    // Initial rank is 1
+        }
+
+        for (int[] edge : edges) {
+            int u = edge[0], v = edge[1];
+
+            // If adding the edge forms a cycle, return it
+            if (!union(u, v, parent, rank)) {
+                return edge;
+            }
+        }
+        return new int[0];  // This case won't occur as per the problem constraints
+    }
+
+    // Find operation with path compression
+    private int find(int node, int[] parent) {
+        if (parent[node] != node) {
+            parent[node] = find(parent[node], parent); // Path compression
+        }
+        return parent[node];
+    }
+
+    // Union operation with rank optimization
+    private boolean union(int u, int v, int[] parent, int[] rank) {
+        int rootU = find(u, parent);
+        int rootV = find(v, parent);
+
+        if (rootU == rootV) return false; // Cycle detected
+
+        // Union by rank
+        if (rank[rootU] > rank[rootV]) {
+            parent[rootV] = rootU;
+        } else if (rank[rootU] < rank[rootV]) {
+            parent[rootU] = rootV;
+        } else {
+            parent[rootV] = rootU;
+            rank[rootU]++;
+        }
+        return true;
+    }
+}
