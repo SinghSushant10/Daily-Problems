@@ -1,0 +1,25 @@
+#3105. Longest Strictly Increasing or Strictly Decreasing Subarray
+
+class Solution {
+    public int longestMonotonicSubarray(int[] nums) {
+        int n = nums.length;
+        int inc = 1, dec = 1, maxLength = 1; // Initialize lengths of increasing, decreasing subarrays
+
+        for (int i = 1; i < n; i++) {
+            if (nums[i] > nums[i - 1]) {
+                inc++; // Strictly increasing
+                dec = 1; // Reset decreasing
+            } else if (nums[i] < nums[i - 1]) {
+                dec++; // Strictly decreasing
+                inc = 1; // Reset increasing
+            } else {
+                inc = 1; // Reset increasing
+                dec = 1; // Reset decreasing
+            }
+
+            maxLength = Math.max(maxLength, Math.max(inc, dec)); // Update the maxLength
+        }
+
+        return maxLength;
+    }
+}
