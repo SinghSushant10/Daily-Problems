@@ -1,0 +1,29 @@
+1790. Check if One String Swap Can Make Strings Equal
+
+class Solution {
+    public boolean areAlmostEqual(String s1, String s2) {
+        // If both strings are already equal, return true
+        if (s1.equals(s2)) return true;
+
+        int n = s1.length();
+        int firstMismatch = -1, secondMismatch = -1;
+
+        // Find mismatched indices
+        for (int i = 0; i < n; i++) {
+            if (s1.charAt(i) != s2.charAt(i)) {
+                if (firstMismatch == -1) {
+                    firstMismatch = i;
+                } else if (secondMismatch == -1) {
+                    secondMismatch = i;
+                } else {
+                    return false; // More than two mismatches, return false
+                }
+            }
+        }
+
+        // Check if swapping the two mismatched indices would make the strings equal
+        return secondMismatch != -1 &&
+               s1.charAt(firstMismatch) == s2.charAt(secondMismatch) &&
+               s1.charAt(secondMismatch) == s2.charAt(firstMismatch);
+    }
+}
