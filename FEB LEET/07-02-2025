@@ -1,0 +1,49 @@
+3160. Find the Number of Distinct Colors Among the Balls
+
+
+class Solution {
+    public int[] queryResults(int limit, int[][] queries) {
+        int n = queries.length;
+        int[] result = new int[n];
+
+        // Stores current color of each ball
+        HashMap<Integer, Integer> ballColorMap = new HashMap<>();
+
+        // Map to maintain the frequency of colors
+        HashMap<Integer, Integer> colorCountMap = new HashMap<>();
+
+        int distinctColors = 0;
+
+        for (int i = 0; i < n; i++) {
+            int ball = queries[i][0];
+            int color = queries[i][1];
+
+            // If the ball already has a color
+            if (ballColorMap.containsKey(ball)) {
+                int currentColor = ballColorMap.get(ball);
+                if (currentColor != color) {
+                    // Decrease the count of the current color
+                    colorCountMap.put(currentColor, colorCountMap.get(currentColor) - 1);
+                    if (colorCountMap.get(currentColor) == 0) {
+                        distinctColors--; // Remove color if count reaches zero
+                    }
+                } else {
+                    // No actual color change, skip counting update
+                    result[i] = distinctColors;
+                    continue;
+                }
+            }
+
+            // Assign the new color and update the frequency
+            ballColorMap.put(ball, color);
+            colorCountMap.put(color, colorCountMap.getOrDefault(color, 0) + 1);
+            if (colorCountMap.get(color) == 1) {
+                distinctColors++; // New distinct color
+            }
+
+            result[i] = distinctColors;
+        }
+
+        return result;
+    }
+}
