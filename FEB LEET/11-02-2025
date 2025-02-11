@@ -1,0 +1,18 @@
+#1910. Remove All Occurrences of a Substring
+
+class Solution {
+    public String removeOccurrences(String s, String part) {
+        StringBuilder sb = new StringBuilder();
+        for(char ch : s.toCharArray()){
+            // append the current character to the stringbuilder 
+            sb.append(ch);
+            //check if the end of stringbuilder contians the part
+            if(sb.length()>=part.length() &&
+             sb.substring(sb.length()-part.length()).equals(part)){
+                //remove the substring "part"
+                sb.delete(sb.length()-part.length(),sb.length());
+             }
+        }
+        return sb.toString();
+    }
+}
