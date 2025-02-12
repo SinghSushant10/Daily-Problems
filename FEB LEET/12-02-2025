@@ -1,0 +1,33 @@
+#2342. Max Sum of a Pair With Equal Sum of Digits
+import java.util.*;
+
+class Solution {
+    public int maximumSum(int[] nums) {
+        Map<Integer, Integer> map = new HashMap<>(); // Stores max num for each digit sum
+        int maxSum = -1;
+
+        for (int num : nums) {
+            int digitSum = getDigitSum(num); // Compute sum of digits
+
+            // If we have seen this digit sum before, calculate the pair sum
+            if (map.containsKey(digitSum)) {
+                maxSum = Math.max(maxSum, map.get(digitSum) + num);
+            }
+
+            // Store the maximum value for this digit sum
+            map.put(digitSum, Math.max(map.getOrDefault(digitSum, 0), num));
+        }
+
+        return maxSum;
+    }
+
+    // Helper function to compute sum of digits
+    private int getDigitSum(int num) {
+        int sum = 0;
+        while (num > 0) {
+            sum += num % 10;
+            num /= 10;
+        }
+        return sum;
+    }
+}
