@@ -1,0 +1,42 @@
+Decode the string
+Given an encoded string s, the task is to decode it. The encoding rule is :
+
+k[encodedString], where the encodedString inside the square brackets is being repeated exactly k times. Note that k is guaranteed to be a positive integer, and encodedString contains only lowercase english alphabets.
+Note: The test cases are generated so that the length of the output string will never exceed 105 .
+Input: s = "3[b2[ca]]"
+Output: "bcacabcacabcaca"
+Explanation:
+1. Inner substring “2[ca]” breakdown into “caca”.
+2. Now, new string becomes “3[bcaca]”
+3. Similarly “3[bcaca]” becomes “bcacabcacabcaca ” which is final result.
+class Solution {
+    static String decodeString(String s) {
+        // code here
+        Stack<Integer> countStack = new Stack<>();
+        Stack<StringBuilder> stringStack= new Stack<>();
+        StringBuilder currentString = new StringBuilder();
+        int num=0;
+        for(char c : s.toCharArray()){
+            if(Character.isDigit(c)){
+                num=num*10+(c-'0') ; //handle multi digit numbers 
+            }
+            else if(c=='['){
+                countStack.push(num);
+                stringStack.push(currentString);
+                currentString = new StringBuilder();
+                num=0;
+            }
+            else if(c==']'){
+                int repeatTimes=countStack.pop();
+                StringBuilder decodePart=stringStack.pop();
+                for(int i=0; i<repeatTimes;i++){
+                    decodePart.append(currentString);
+                }
+                currentString= decodePart;
+            }else{
+                currentString.append(c);
+            }
+        }
+        return currentString.toString();
+    }
+}
