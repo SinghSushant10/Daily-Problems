@@ -22,17 +22,25 @@ Constraints:
 class Solution {
     public int findMissing(int[] arr) {
         int n = arr.length;
-        int d = (arr[n - 1] - arr[0]) / n;  // n because one element is missing
-        
+        int d = Integer.MAX_VALUE;
+
+        // Calculate minimum adjacent absolute difference
         for (int i = 1; i < n; i++) {
-            int expected = arr[0] + i * d;
-            if (arr[i] != expected) {
-                return expected;
+            d = Math.min(d, Math.abs(arr[i] - arr[i - 1]));
+        }
+
+        // Determine the sign of the progression (ascending or descending)
+        int sign = (arr[1] - arr[0] > 0) ? 1 : -1;
+        d *= sign;
+
+        // Find where the difference deviates
+        for (int i = 1; i < n; i++) {
+            if (arr[i] - arr[i - 1] != d) {
+                return arr[i - 1] + d;
             }
         }
-        
-        // If no element is missing, return the next element in the sequence
+
+        // If all differences match, return the next element in AP
         return arr[n - 1] + d;
     }
 }
-
