@@ -1,0 +1,36 @@
+#2094. Finding 3-Digit Even Numbers
+
+
+class Solution {
+    public int[] findEvenNumbers(int[] digits) {
+        int[] freq = new int[10];  // Count digits from 0 to 9
+        for (int d : digits) {
+            freq[d]++;
+        }
+
+        Set<Integer> result = new TreeSet<>();  // TreeSet keeps elements sorted & unique
+
+        for (int num = 100; num <= 998; num += 2) {  // Only even 3-digit numbers
+            int a = num / 100;
+            int b = (num / 10) % 10;
+            int c = num % 10;
+
+            // Check if we can form the number using digits array
+            freq[a]--; freq[b]--; freq[c]--;
+            if (freq[a] >= 0 && freq[b] >= 0 && freq[c] >= 0) {
+                result.add(num);
+            }
+            // Backtrack frequency count
+            freq[a]++; freq[b]++; freq[c]++;
+        }
+
+        // Convert to int[]
+        int[] res = new int[result.size()];
+        int idx = 0;
+        for (int num : result) {
+            res[idx++] = num;
+        }
+
+        return res;
+    }
+}
