@@ -1,0 +1,72 @@
+#3337. Total Characters in String After Transformations II
+import java.util.*;
+
+public class Solution {
+    private static final int MOD = (int)1e9 + 7;
+    private static final int SIZE = 26;
+
+    public int lengthAfterTransformations(String s, int t, List<Integer> nums) {
+        long[][] T = new long[SIZE][SIZE];
+
+        // Build transformation matrix T
+        for (int i = 0; i < SIZE; ++i) {
+            for (int j = 1; j <= nums.get(i); ++j) {
+                T[i][(i + j) % SIZE]++;
+            }
+        }
+
+        long[][] T_exp = matrixPower(T, t);
+
+        long[] freq = new long[SIZE];
+        for (char c : s.toCharArray()) {
+            freq[c - 'a']++;
+        }
+
+        long total = 0;
+        for (int j = 0; j < SIZE; ++j) {
+            long sum = 0;
+            for (int i = 0; i < SIZE; ++i) {
+                sum = (sum + freq[i] * T_exp[i][j]) % MOD;
+            }
+            total = (total + sum) % MOD;
+        }
+
+        return (int) total;
+    }
+
+    // Matrix multiplication
+    private long[][] matrixMultiply(long[][] A, long[][] B) {
+        long[][] result = new long[SIZE][SIZE];
+        for (int i = 0; i < SIZE; ++i) {
+            for (int k = 0; k < SIZE; ++k) {
+                if (A[i][k] == 0) continue;
+                for (int j = 0; j < SIZE; ++j) {
+                    result[i][j] = (result[i][j] + A[i][k] * B[k][j]) % MOD;
+                }
+            }
+        }
+        return result;
+    }
+
+    // Matrix exponentiation
+    private long[][] matrixPower(long[][] mat, int power) {
+        long[][] result = new long[SIZE][SIZE];
+
+        // Initialize result as identity matrix
+        for (int i = 0; i < SIZE; ++i) {
+            result[i][i] = 1;
+        }
+
+        long[][] base = mat;
+
+        while (power > 0) {
+            if ((power & 1) == 1) {
+                result = matrixMultiply(result, base);
+            }
+            base = matrixMultiply(base, base);
+            power >>= 1;
+        }
+
+        return result;
+    }
+}
