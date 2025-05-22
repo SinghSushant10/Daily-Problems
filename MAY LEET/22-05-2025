@@ -3,62 +3,47 @@
 class Solution {
     public int maxRemoval(int[] nums, int[][] queries) {
         int n = nums.length;
-        int m = queries.length;
-        int[] diff = new int[n + 1]; // Difference array for range updates
 
-        // Step 1: Apply all queries to the difference array
-        for (int[] query : queries) {
-            int li = query[0];
-            int ri = query[1];
-            diff[li] += 1;
-            if (ri + 1 < n) diff[ri + 1] -= 1;
-        }
+        // Min-heap for used queries (stores end indices)
+        PriorityQueue<Integer> past = new PriorityQueue<>();
 
-        // Step 2: Compute the total effect on nums
-        int[] effects = new int[n];
-        int currentEffect = 0;
+        // Max-heap for available queries (stores end indices)
+        PriorityQueue<Integer> maxHeap = new PriorityQueue<>(Collections.reverseOrder());
+
+        // Sort queries by start index
+        Arrays.sort(queries, (a, b) -> Integer.compare(a[0], b[0]));
+
+        int j = 0;               // Pointer to queries
+        int usedCount = 0;       // Number of queries used
+
         for (int i = 0; i < n; i++) {
-            currentEffect += diff[i];
-            effects[i] = currentEffect;
-        }
-
-        // Step 3: Check if nums can be zeroed with all queries
-        if (!canBeZeroed(nums, effects)) {
-            return -1; // If not possible, return -1
-        }
-
-        // Step 4: Try to remove queries while maintaining feasibility
-        int removed = 0;
-        for (int i = 0; i < m; i++) {
-            int li = queries[i][0];
-            int ri = queries[i][1];
-
-            // Temporarily remove the query's effect
-            for (int j = li; j <= ri; j++) {
-                effects[j] -= 1;
+            // Push all queries starting at index i
+            while (j < queries.length && queries[j][0] == i) {
+                maxHeap.offer(queries[j][1]);  // Push only end index
+                j++;
             }
 
-            // Check if nums can still be zeroed
-            if (canBeZeroed(nums, effects)) {
-                removed++; // Successfully removed the query
-            } else {
-                // Revert the query's effect if nums cannot be zeroed
-                for (int j = li; j <= ri; j++) {
-                    effects[j] += 1;
-                }
+            // Apply effect of already used queries
+            nums[i] -= past.size();
+
+            // Apply more queries if needed
+            while (nums[i] > 0 && !maxHeap.isEmpty() && maxHeap.peek() >= i) {
+                int r = maxHeap.poll();
+                past.offer(r);
+                usedCount++;
+                nums[i]--;
+            }
+
+            // If we can't make nums[i] zero
+            if (nums[i] > 0)
+                return -1;
+
+            // Remove expired queries
+            while (!past.isEmpty() && past.peek() == i) {
+                past.poll();
             }
         }
 
-        return removed;
-    }
-
-    // Helper function to check if nums can be zeroed with the current effects
-    private boolean canBeZeroed(int[] nums, int[] effects) {
-        for (int i = 0; i < nums.length; i++) {
-            if (nums[i] > effects[i]) {
-                return false; // If any element is greater than the effect, return false
-            }
-        }
-        return true;
+        return queries.length - usedCount;
     }
 }
