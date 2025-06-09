@@ -1,0 +1,26 @@
+#440. K-th Smallest in Lexicographical Order
+
+class Solution {
+    public void solve(int curr, int n, List<Integer> result) {
+        if (curr > n) return;
+
+        result.add(curr);
+
+        for (int nextDigit = 0; nextDigit <= 9; nextDigit++) {
+            int nextnum = curr * 10 + nextDigit;
+            if (nextnum > n) return;
+            
+            solve(nextnum, n, result);
+        }
+    }
+
+    public int findKthNumber(int n, int k) {
+        List<Integer> result = new ArrayList<>();
+        
+        for (int num = 1; num <= 9; num++) {
+            solve(num, n, result);
+        }
+        
+        return result.get(k - 1);
+    }
+}
