@@ -1,0 +1,63 @@
+#Exactly one swap
+Given a string s, return the number of distinct strings that can be obtained by exactly one swap of two different indices (i < j).
+
+Examples:
+
+Input: s = "geek"
+Output: 6
+Explanation: After one swap, There are only 6 distinct strings possible.(i.e "egek","eegk","geek","geke","gkee" and "keeg") 
+Input: s = "aaaa"
+Output: 1
+Explanation: Only one distinct string is possible after one swap(i.e "aaaa")
+Constraints:
+2 ≤ s.size() ≤ 104
+
+
+******************************BRUTE CODE *************************
+class Solution {
+    int countStrings(String s) {
+        Set<String> seen = new HashSet<>();
+        char[] arr = s.toCharArray();
+        int n = arr.length;
+
+        for (int i = 0; i < n; ++i) {
+            for (int j = i + 1; j < n; ++j) {
+                swap(arr, i, j);
+                seen.add(new String(arr));
+                swap(arr, i, j); // restore original
+            }
+        }
+
+        return seen.size();
+    }
+
+    void swap(char[] arr, int i, int j) {
+        char tmp = arr[i];
+        arr[i] = arr[j];
+        arr[j] = tmp;
+    }
+}
+
+*********************Optimized Code****************************************
+
+class Solution {
+    int countStrings(String s) {
+        // code here
+        Map<Character, Integer> freq = new HashMap();
+        for(char ch: s.toCharArray()){
+            freq.put(ch, freq.getOrDefault(ch, 0)+1);
+        }
+        int ans = 0;
+        int len = s.length();
+        boolean flag = false;
+        for(char ch: s.toCharArray()){
+            if(freq.get(ch) > 1){
+                flag = true;
+            }
+            ans+=len - freq.get(ch);
+        }
+        ans/=2;
+        ans+=flag ? 1 : 0;
+        return ans;
+    }
+}
