@@ -1,0 +1,47 @@
+#All Palindromic Partitions
+
+Given a string s, find all possible ways to partition it such that every substring in the partition is a palindrome.
+
+Examples:
+
+Input: s = "geeks"
+Output: [[g, e, e, k, s], [g, ee, k, s]]
+Explanation: [g, e, e, k, s] and [g, ee, k, s] are the only partitions of "geeks" where each substring is a palindrome.
+Input: s = "abcba"
+Output: [[a, b, c, b, a], [a, bcb, a], [abcba]]
+Explanation: [a, b, c, b, a], [a, bcb, a] and [abcba] are the only partitions of "abcba" where each substring is a palindrome.
+Constraints:
+1 ≤ s.size() ≤ 20
+
+class Solution {
+    public ArrayList<ArrayList<String>> palinParts(String s) {
+        ArrayList<ArrayList<String>> result = new ArrayList<>();
+        backtrack(0, s, new ArrayList<>(), result);
+        return result;
+    }
+    
+    private void backtrack(int start, String s, ArrayList<String> current, ArrayList<ArrayList<String>> result) {
+        if (start == s.length()) {
+            result.add(new ArrayList<>(current));
+            return;
+        }
+        
+        for (int end = start + 1; end <= s.length(); end++) {
+            String prefix = s.substring(start, end);
+            if (isPalindrome(prefix)) {
+                current.add(prefix);
+                backtrack(end, s, current, result);
+                current.remove(current.size() - 1); // backtrack
+            }
+        }
+    }
+    
+    private boolean isPalindrome(String str) {
+        int l = 0, r = str.length() - 1;
+        while (l < r) {
+            if (str.charAt(l++) != str.charAt(r--)) return false;
+        }
+        return true;
+    }
+}
+
