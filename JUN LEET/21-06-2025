@@ -1,0 +1,37 @@
+#3085. Minimum Deletions to Make String K-Special
+
+import java.util.*;
+
+class Solution {
+    public int minimumDeletions(String word, int k) {
+        int[] freq = new int[26];
+        for (char ch : word.toCharArray()) {
+            freq[ch - 'a']++;
+        }
+
+        List<Integer> freqList = new ArrayList<>();
+        for (int f : freq) {
+            if (f > 0) freqList.add(f);
+        }
+
+        Collections.sort(freqList);
+        int minDeletions = Integer.MAX_VALUE;
+
+        for (int i = 0; i < freqList.size(); i++) {
+            int target = freqList.get(i);  // base frequency
+            int deletions = 0;
+
+            for (int f : freqList) {
+                if (f < target) {
+                    deletions += f;  // delete all (optional)
+                } else if (f > target + k) {
+                    deletions += f - (target + k);  // reduce to target + k
+                }
+            }
+
+            minDeletions = Math.min(minDeletions, deletions);
+        }
+
+        return minDeletions;
+    }
+}
